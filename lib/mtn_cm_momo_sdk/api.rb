@@ -19,51 +19,32 @@ module MtnCmMomoSdk
 
     # @param [Object] amount
     def buy_now!(tel, amount)
-
-      da =body.merge!(_amount: amount)
-              .merge!(_tel: tel)
+      da = body.merge!(_amount: amount)
+               .merge!(_tel: tel)
       # da =  payload(da)
-      begin
-        self.class.get('/transactionRequest.xhtml', query: da)
-      rescue Net::ReadTimeout
-        {
-            :msg => "User does not authorize the request",
-            :request_status => false
-        }
-      end
+      call_server '/transactionRequest.xhtml', da
     end
 
     def refund!(tel, amount)
-
-      da =body.merge!(_amount: amount)
-              .merge!(_tel: tel)
-      #da =  payload(da)
-      self.class.get('/transaction.xhtml', query: da)
+      da = body.merge!(_amount: amount)
+               .merge!(_tel: tel)
+      # da =  payload(da)
+      call_server '/transaction.xhtml', da
     end
 
     def donate!(tel, amount)
-
-      da =body.merge!(_amount: amount)
-              .merge!(_tel: tel)
-      #da =  payload(da)
-      self.class.get('/transaction.xhtml', query: da)
+      da = body.merge!(_amount: amount)
+               .merge!(_tel: tel)
+      # da =  payload(da)
+      call_server '/transaction.xhtml', da
     end
 
     def checkout!(tel, amount)
-
-      da =body.merge!(_amount: amount)
-              .merge!(_tel: tel)
-      #da =  payload(da)
-      begin
-        self.class.get('/transactionRequest.xhtml', query: da)
-      rescue Net::ReadTimeout
-        {
-            :msg => "User does not authorize the request",
-            :request_status => false
-        }
-      end
+      da = body.merge!(_amount: amount)
+               .merge!(_tel: tel)
+      # da =  payload(da)
+      call_server '/transactionRequest.xhtml', da
     end
-
 
     private
 
@@ -71,22 +52,71 @@ module MtnCmMomoSdk
       options = {}
       options.merge!(body: body)
           .merge!(headers: headers)
-
     end
 
     def body
-
       body = {
           idbouton: @transaction[:idbouton],
           typebouton: @transaction[:typebouton],
           _clP: MtnCmMomoSdk.developer_clP,
           _email: MtnCmMomoSdk.developer_email
       }
-
     end
 
     def headers
       {'Content-Type' => 'application/json'}
+    end
+
+    def call_server(url, data)
+      resp = self.class.get(url, query: data)
+      resp = JSON.parse resp.parsed_response
+      if resp == -1
+        {
+            :request_status => false,
+            :msg => 'the whole transaction failed',
+            :server_respond => resp
+        }
+      elsif resp["StatusCode"] == "01"
+        {
+            :request_status => true,
+            :msg => 'Successfully processed transaction',
+            :server_respond => resp
+        }
+      else
+        {
+            :request_status => false,
+            :msg => 'General failure',
+            :server_respond => resp
+        }
+      end
+    rescue Net::ReadTimeout
+      {
+          msg: 'User does not authorize the request',
+          request_status: false,
+          server_respond: nil
+
+      }
+    rescue Net::OpenTimeout
+      {
+          msg: 'could not connect to mtn server, please check your internet connection',
+          request_status: false,
+          server_respond: nil
+
+      }
+    rescue SocketError
+      {
+          msg: 'could not connect to mtn server, please check your internet connection',
+          request_status: false,
+          server_respond: nil
+
+      }
+    rescue => ex
+      {
+          msg: ex.message,
+          request_status: false,
+          server_respond: nil
+
+      }
     end
   end
 end

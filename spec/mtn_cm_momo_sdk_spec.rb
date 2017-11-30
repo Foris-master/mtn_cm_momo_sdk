@@ -12,7 +12,7 @@ describe 'CallingServer' do
       config.developer_clP = ENV["MTN_DEVELOPER_CLP"]
     end
 
-    @resp = @svr.buy_now! '678181114', 100
+    @resp = @svr.buy_now! '678181114', 50
     puts @resp
     expect(@resp).to_not eq nil
   end
@@ -23,7 +23,7 @@ describe 'CallingServer' do
       config.developer_clP = ENV["MTN_DEVELOPER_CLP"]
     end
 
-    @resp = @svr.refund! '678181114', 100
+    @resp = @svr.refund! '678181114', 50
     puts @resp
     expect(@resp).to_not eq nil
   end
