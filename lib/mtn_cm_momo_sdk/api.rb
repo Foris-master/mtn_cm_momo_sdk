@@ -69,26 +69,29 @@ module MtnCmMomoSdk
 
     def call_server(url, data)
       resp = self.class.get(url, query: data)
-      resp = JSON.parse resp.parsed_response
       if resp == -1
         {
             :request_status => false,
             :msg => 'the whole transaction failed',
             :server_respond => resp
         }
-      elsif resp["StatusCode"] == "01"
-        {
-            :request_status => true,
-            :msg => 'Successfully processed transaction',
-            :server_respond => resp
-        }
       else
-        {
-            :request_status => false,
-            :msg => 'General failure',
-            :server_respond => resp
-        }
+        resp = JSON.parse resp.parsed_response
+        if resp["StatusCode"] == "01"
+          {
+              :request_status => true,
+              :msg => 'Successfully processed transaction',
+              :server_respond => resp
+          }
+        else
+          {
+              :request_status => false,
+              :msg => 'General failure',
+              :server_respond => resp
+          }
+        end
       end
+
     rescue Net::ReadTimeout
       {
           msg: 'User does not authorize the request',
