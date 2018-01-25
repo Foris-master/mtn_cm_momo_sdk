@@ -19,35 +19,33 @@ module MtnCmMomoSdk
 
     # @param [Object] amount
     def buy_now!(tel, amount)
-      da = body.merge!(_amount: amount)
-               .merge!(_tel: tel)
-      # da =  payload(da)
+      da = format_data tel, amount
       call_server '/transactionRequest.xhtml', da
     end
 
     def refund!(tel, amount)
-      da = body.merge!(_amount: amount)
-               .merge!(_tel: tel)
-      # da =  payload(da)
+      da = format_data(tel, amount)
       call_server '/transaction.xhtml', da
     end
 
     def donate!(tel, amount)
-      da = body.merge!(_amount: amount)
-               .merge!(_tel: tel)
-      # da =  payload(da)
+      da = format_data(tel, amount)
       call_server '/transaction.xhtml', da
     end
 
     def checkout!(tel, amount)
-      da = body.merge!(_amount: amount)
-               .merge!(_tel: tel)
-      # da =  payload(da)
+      da = format_data(tel, amount)
       call_server '/transactionRequest.xhtml', da
     end
 
     private
 
+    def format_data(tel, amount)
+      tel = tel.gsub("+237", "")
+      amount = amount.to_i.to_s
+      da = body.merge!(_amount: amount)
+               .merge!(_tel: tel)
+    end
     def payload(body)
       options = {}
       options.merge!(body: body)
@@ -69,11 +67,11 @@ module MtnCmMomoSdk
 
     def call_server(url, data)
       resp = self.class.get(url, query: data)
-      if resp == -1
+      if resp.parsed_response == "-1"
         {
             :request_status => false,
             :msg => 'the whole transaction failed',
-            :server_respond => resp
+            :server_respond => resp.parsed_response
         }
       else
         resp = JSON.parse resp.parsed_response

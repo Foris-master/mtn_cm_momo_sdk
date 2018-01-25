@@ -5,6 +5,7 @@ describe 'CallingServer' do
     @svr = MtnCmMomoSdk::APIService.new nil
     expect(@svr).to_not eq nil
   end
+=begin
   it 'should buy now' do
     @svr = MtnCmMomoSdk::APIService.new nil
     MtnCmMomoSdk.setup do |config|
@@ -16,6 +17,7 @@ describe 'CallingServer' do
     puts @resp
     expect(@resp).to_not eq nil
   end
+=end
   it 'should refund' do
     @svr = MtnCmMomoSdk::APIService.new nil
     MtnCmMomoSdk.setup do |config|
@@ -23,7 +25,9 @@ describe 'CallingServer' do
       config.developer_clP = ENV["MTN_DEVELOPER_CLP"]
     end
 
-    @resp = @svr.refund! '678181114', 50
+    @a = 50*200.0
+    @tel = '+237678181114'
+    @resp = @svr.refund! @tel, @a
     puts @resp
     expect(@resp).to_not eq nil
   end
