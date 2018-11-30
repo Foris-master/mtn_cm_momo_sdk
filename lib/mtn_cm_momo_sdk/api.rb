@@ -66,7 +66,11 @@ module MtnCmMomoSdk
     end
 
     def call_server(url, data)
-      resp = self.class.get(url, query: data)
+      puts MtnCmMomoSdk.check_ssl
+
+      check = MtnCmMomoSdk.check_ssl.to_s.downcase == "true"
+
+      resp = self.class.get(url, query: data,verify: check)
       if resp.parsed_response == "-1"
         {
             :request_status => false,

@@ -23,9 +23,10 @@ describe 'CallingServer' do
     MtnCmMomoSdk.setup do |config|
       config.developer_email = ENV["MTN_DEVELOPER_EMAIL"]
       config.developer_clP = ENV["MTN_DEVELOPER_CLP"]
+      config.check_ssl = ENV["MTN_DEVELOPER_CHECK_SSL"]
     end
 
-    @a = 50*200.0
+    @a = 50*1
     @tel = '+237678181114'
     @resp = @svr.refund! @tel, @a
     puts @resp

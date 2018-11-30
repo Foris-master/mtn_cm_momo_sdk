@@ -10,6 +10,9 @@ module MtnCmMomoSdk
   mattr_accessor :developer_clP
   @@developer_clP = ""
 
+  mattr_accessor :check_ssl
+  @@check_ssl = true
+
   # API URL
   mattr_accessor :mtn_api_url
   @@mtn_api_url = "https://developer.mtn.cm/OnlineMomoWeb/faces/transaction/"
